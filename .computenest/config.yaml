@@ -56,6 +56,11 @@ Artifact:
     ArtifactName: ecs_image_quickstart-langsmith
     Description: quickstart-langsmith EcsImage
     ArtifactProperty:
+      RegionId: ${ImageBuilder.EcsImage.RegionId}
+      ImageId: ${ImageBuilder.EcsImage.SourceImageId}
+ImageBuilder:
+  EcsImage:
+        RegionId: ap-southeast-1
         SourceImageId: aliyun_3_x64_20G_alibase_20240819.vhd
         SystemDiskSize: 20
         InstanceType: ecs.c6.large
