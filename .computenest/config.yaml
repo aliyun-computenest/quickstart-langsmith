@@ -55,56 +55,57 @@ Artifact:
     ArtifactType: EcsImage
     ArtifactName: ecs_image_quickstart-langsmith
     Description: quickstart-langsmith EcsImage
-    SourceImageId: aliyun_3_x64_20G_alibase_20240819.vhd
-    SystemDiskSize: 20
-    InstanceType: ecs.c6.large
-    InternetMaxBandwidthOut: 10
-    CommandType: RunShellScript
-    Timeout: 10800
-    Tags: [ ]
-    CommandContent: |-
-      #!/bin/bash
-      # 升级基础组件：
-      yum check-update
-      yum -y upgrade --security
-      yum -y upgrade-minimal
+    ArtifactProperty:
+        SourceImageId: aliyun_3_x64_20G_alibase_20240819.vhd
+        SystemDiskSize: 20
+        InstanceType: ecs.c6.large
+        InternetMaxBandwidthOut: 10
+        CommandType: RunShellScript
+        Timeout: 10800
+        Tags: [ ]
+        CommandContent: |-
+          #!/bin/bash
+          # 升级基础组件：
+          yum check-update
+          yum -y upgrade --security
+          yum -y upgrade-minimal
 
-      # 安装docker-ce
-      yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-      yum makecache
-      yum install -y curl git docker-ce
-      mkdir -p /etc/docker/
-      echo '{
-          "default-address-pools": [
-              {
-                  "base": "10.255.0.0/16",
-                  "size": 24
-              }
-          ]
-      }' > /etc/docker/daemon.json
+          # 安装docker-ce
+          yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+          yum makecache
+          yum install -y curl git docker-ce
+          mkdir -p /etc/docker/
+          echo '{
+              "default-address-pools": [
+                  {
+                      "base": "10.255.0.0/16",
+                      "size": 24
+                  }
+              ]
+          }' > /etc/docker/daemon.json
 
-      prefixChinaRegion="cn-"
-      region=$(curl -s http://100.100.100.200/latest/meta-data/region-id)
+          prefixChinaRegion="cn-"
+          region=$(curl -s http://100.100.100.200/latest/meta-data/region-id)
 
-      if [[ ${region} == ${prefixChinaRegion}* && ${region} != "cn-hongkong" ]]; then
-        echo '{
-            "default-address-pools": [
-                {
-                    "base": "10.255.0.0/16",
-                    "size": 24
-                }
-            ],
-            "registry-mirrors": [
-                "https://mirrors-ssl.aliyuncs.com/"
-            ]
-        }' > /etc/docker/daemon.json
-      fi
+          if [[ ${region} == ${prefixChinaRegion}* && ${region} != "cn-hongkong" ]]; then
+            echo '{
+                "default-address-pools": [
+                    {
+                        "base": "10.255.0.0/16",
+                        "size": 24
+                    }
+                ],
+                "registry-mirrors": [
+                    "https://mirrors-ssl.aliyuncs.com/"
+                ]
+            }' > /etc/docker/daemon.json
+          fi
 
-      sudo systemctl enable --now docker.socket
-      sudo systemctl enable --now docker.service
+          sudo systemctl enable --now docker.socket
+          sudo systemctl enable --now docker.service
 
-      cd /root
-      git clone https://github.com/langchain-ai/helm.git
-      cd /root/helm/charts/langsmith/docker-compose
-      cp .env.example .env
-      docker compose up -d
+          cd /root
+          git clone https://github.com/langchain-ai/helm.git
+          cd /root/helm/charts/langsmith/docker-compose
+          cp .env.example .env
+          docker compose up -d
