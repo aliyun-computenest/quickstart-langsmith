@@ -278,7 +278,7 @@ Resources:
         Ref: ZoneId
       SecurityGroupId:
         Ref: SecurityGroup
-      ImageId: ecs_image_quickstart-langfuse
+      ImageId: ecs_image_quickstart-langsmith
       Password:
         Ref: InstancePassword
       InstanceType:
